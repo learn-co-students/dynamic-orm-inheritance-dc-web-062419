@@ -1,5 +1,6 @@
 require_relative "../config/environment.rb"
 require 'active_support/inflector'
+require 'pry'
 
 class InteractiveRecord
 
@@ -10,7 +11,7 @@ class InteractiveRecord
   def self.column_names
     DB[:conn].results_as_hash = true
 
-    sql = "pragma table_info('#{table_name}')"
+    sql = "PRAGMA table_info('#{table_name}')"
 
     table_info = DB[:conn].execute(sql)
     column_names = []
@@ -29,7 +30,14 @@ class InteractiveRecord
   def save
     sql = "INSERT INTO #{table_name_for_insert} (#{col_names_for_insert}) VALUES (#{values_for_insert})"
     DB[:conn].execute(sql)
+    # binding.pry
+    # sql = <<-SQL
+    #   INSERT INTO  ( ? ) VALUES ( ? )
+    # SQL
+    # DB[:conn].execute(sql, table_name_for_insert, col_names_for_insert, values_for_insert)
     @id = DB[:conn].execute("SELECT last_insert_rowid() FROM #{table_name_for_insert}")[0][0]
+    puts "We added that and it's in id# #{@id}"
+    # binding.pry
   end
 
   def table_name_for_insert
@@ -49,8 +57,9 @@ class InteractiveRecord
   end
 
 def self.find_by_name(name)
-  sql = "SELECT * FROM #{self.table_name} WHERE name = '?'"
-  DB[:conn].execute(sql, name)
+  binding.pry
+  sql = "SELECT * FROM #{self.table_name} WHERE name = '#{name}'"
+  DB[:conn].execute(sql)
 end
 
 end
