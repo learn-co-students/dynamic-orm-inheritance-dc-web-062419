@@ -1,3 +1,4 @@
+# Here we inherit from the interactive_record ORM that we defined
 require_relative "./interactive_record.rb"
 
 class Song < InteractiveRecord
